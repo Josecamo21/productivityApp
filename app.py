@@ -2,27 +2,34 @@ import streamlit as st
 from PIL import Image
 import pytesseract
 
-# Título de la aplicación
+# Configurar el título de la aplicación
 st.title("Analizador de Pantallas Web")
 
-# Subir imagen
+# Cargar imagen desde el usuario
 uploaded_file = st.file_uploader("Sube una captura de pantalla", type=["jpg", "png", "jpeg"])
 
+# Si el usuario carga una imagen
 if uploaded_file is not None:
-    # Mostrar la imagen cargada
+    # Abrir la imagen y mostrarla
     image = Image.open(uploaded_file)
     st.image(image, caption="Imagen cargada", use_column_width=True)
 
-    # Procesar la imagen para extraer texto
+    # Proceso de OCR para extraer texto
     st.write("### Análisis del contenido:")
     with st.spinner("Procesando la imagen..."):
-        extracted_text = pytesseract.image_to_string(image)
-        if extracted_text.strip():
-            st.write("**Texto detectado:**")
-            st.text(extracted_text)
-        else:
-            st.write("No se detectó texto en la imagen.")
+        try:
+            # Extraer texto de la imagen
+            extracted_text = pytesseract.image_to_string(image)
+
+            # Mostrar el texto detectado
+            if extracted_text.strip():
+                st.write("**Texto detectado:**")
+                st.text(extracted_text)
+            else:
+                st.write("No se detectó texto en la imagen.")
+        except Exception as e:
+            st.error(f"Error al procesar la imagen: {e}")
 
     st.write("### Descripción general:")
-    st.write("La imagen ha sido analizada para extraer texto visible y detectar posibles actividades relacionadas con su contenido.")
+    st.write("Esta imagen ha sido analizada para extraer texto visible y detectar posibles actividades relacionadas con su contenido.")
 
